@@ -52,6 +52,7 @@ spec:
       - name: varlog
         hostPath:
           path: /var/log
+      # registre de lecture des fichiers : évite de tout renvoyer si le pod redémarre
       - name: data
         hostPath:
           path: /var/lib/filebeat-data
