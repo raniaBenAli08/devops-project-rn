@@ -90,6 +90,18 @@ spec:
                   name: hr-secrets
                   key: APP_BOOTSTRAP_ADMIN_PASSWORD
                   optional: true
+            - name: MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: hr-secrets
+                  key: MAIL_USERNAME
+                  optional: true
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hr-secrets
+                  key: MAIL_PASSWORD
+                  optional: true
           startupProbe:
             tcpSocket:
               port: 8080
