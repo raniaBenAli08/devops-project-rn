@@ -1,6 +1,6 @@
 # --- Ces 2 lignes sont réécrites automatiquement par Jenkins : ne pas les renommer ---
-backendTag: "v2"
-frontendTag: "v2"
+backendTag: "v3"
+frontendTag: "v3"
 
 # Ton nom d'utilisateur Docker Hub (les images sont <dockerUser>/hr-backend et <dockerUser>/hr-frontend)
 dockerUser: rania08082002
