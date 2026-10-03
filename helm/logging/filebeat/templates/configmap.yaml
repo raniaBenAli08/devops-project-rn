@@ -5,27 +5,20 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     k8s-app: {{ .Values.appName }}
-    
+
 data:
   filebeat.yml: |-
-    filebeat.autodiscover:
-      providers:
-        - type: kubernetes
-          templates:
-            - condition:
-                equals: 
-                  kubernetes.namespace: {{ .Values.appNamespace }}
-              config:
-                - module: nginx
-                  access.input:
-                      type: docker
-                      containers.ids:
-                      - "${data.kubernetes.container.id}"
-                      paths:
-                        - /var/log/containers/*${data.kubernetes.container.id}.log
+    filebeat.inputs:
+      - type: container
+        paths:
+          - /var/log/containers/*_{{ .Values.appNamespace }}_*.log
+        processors:
+          - add_kubernetes_metadata:
+              host: ${NODE_NAME}
+              matchers:
+                - logs_path:
+                    logs_path: "/var/log/containers/"
 
-    setup.dashboards.enabled: true
-    setup.kibana:
-      host: {{ .Values.kibanaService }}            
+    setup.dashboards.enabled: false
     output.elasticsearch:
-      hosts: [{{ .Values.esService}}]
+      hosts: [{{ .Values.esService }}]
