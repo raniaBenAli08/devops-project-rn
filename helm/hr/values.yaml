@@ -40,4 +40,4 @@ mysql:
 
 # Passe à true à la phase 5 (nécessite Actuator dans le backend + Prometheus installé)
 monitoring:
-  enabled: false
+  enabled: true

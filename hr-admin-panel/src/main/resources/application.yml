@@ -61,3 +61,16 @@ app:
   registration:
     frontend-url: ${APP_FRONTEND_URL:http://localhost:5173}
     verification-expiration-hours: ${EMAIL_VERIFICATION_EXPIRATION_HOURS:24}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: hr-admin-panel
