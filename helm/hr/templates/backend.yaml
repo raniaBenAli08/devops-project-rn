@@ -68,6 +68,10 @@ spec:
               value: "{{ .Values.frontendUrl }}"
             - name: ASSISTANT_ENABLED
               value: "false"
+            - name: SERVER_FORWARD_HEADERS_STRATEGY
+              value: "none"
+            - name: SERVER_FORWARD_HEADERS_STRATEGY
+              value: "none"
             - name: APP_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
