@@ -1,0 +1,22 @@
+# Application ArgoCD du site RH : surveille helm/hr sur la branche main et déploie dans le namespace hr
+# Prérequis : le namespace "hr" et le Secret "hr-secrets" existent déjà (créés à la main).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hr-admin-panel
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/raniaBenAli08/devops-project-rn.git
+    targetRevision: main
+    path: helm/hr
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hr
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

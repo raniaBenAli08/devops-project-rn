@@ -1,0 +1,7 @@
+target
+uploads
+frontend
+.git
+.env
+docker-compose.yml
+*.md

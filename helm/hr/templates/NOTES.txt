@@ -1,0 +1,3 @@
+Site RH déployé dans le namespace {{ .Release.Namespace }}.
+Pour l ouvrir :  kubectl -n {{ .Release.Namespace }} port-forward svc/frontend 8081:80
+puis http://localhost:8081

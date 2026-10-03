@@ -1,0 +1,6 @@
+apiVersion: v2
+name: hr
+description: HR Admin Panel - frontend (nginx) + backend (Spring Boot) + MySQL
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

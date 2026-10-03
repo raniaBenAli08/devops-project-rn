@@ -1,0 +1,43 @@
+# --- Ces 2 lignes sont réécrites automatiquement par Jenkins : ne pas les renommer ---
+backendTag: "v0"
+frontendTag: "v0"
+
+# Ton nom d'utilisateur Docker Hub (les images sont <dockerUser>/hr-backend et <dockerUser>/hr-frontend)
+dockerUser: rania08082002
+
+# Adresse du site vue par le navigateur (utilisée par le backend pour les liens d'e-mail)
+frontendUrl: "http://localhost:8081"
+
+backend:
+  uploadsStorage: 1Gi
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+frontend:
+  resources:
+    requests:
+      cpu: 20m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+mysql:
+  image: mysql:8.4
+  storage: 2Gi
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+# Passe à true à la phase 5 (nécessite Actuator dans le backend + Prometheus installé)
+monitoring:
+  enabled: false

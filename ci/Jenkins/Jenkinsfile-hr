@@ -1,0 +1,93 @@
+// Pipeline du site RH (backend Spring Boot / Java 25 + frontend React)
+// Le JDK 25 n'est pas dans l'image Jenkins : Maven tourne dans un conteneur maven:...-temurin-25
+// lancé avec --volumes-from jenkins (il voit donc le même workspace que Jenkins).
+pipeline {
+    agent any
+
+    environment {
+        GIT_USER_NAME = "raniaBenAli08"
+        GIT_REPO_NAME = "devops-project-rn"
+        IMAGE_TAG     = "v${BUILD_NUMBER}"
+        MVN_IMAGE     = "maven:3.9-eclipse-temurin-25"
+        SONAR_URL     = "http://sonarqube:9000"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Tests Maven') {
+            steps {
+                sh '''
+                    docker run --rm --volumes-from jenkins \
+                      -u "$(id -u):$(id -g)" -e MAVEN_CONFIG=/tmp/.m2 \
+                      -w "$WORKSPACE/hr-admin-panel" \
+                      $MVN_IMAGE \
+                      mvn -B -Duser.home=/tmp -Dmaven.repo.local="$WORKSPACE/.m2/repository" test
+                '''
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'hr-admin-panel/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Analyse SonarQube') {
+            steps {
+                withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+                    sh '''
+                        docker run --rm --volumes-from jenkins --network container:jenkins \
+                          -u "$(id -u):$(id -g)" -e MAVEN_CONFIG=/tmp/.m2 \
+                          -w "$WORKSPACE/hr-admin-panel" \
+                          $MVN_IMAGE \
+                          mvn -B -Duser.home=/tmp -Dmaven.repo.local="$WORKSPACE/.m2/repository" \
+                            compile org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                            -Dsonar.projectKey=hr-admin-panel \
+                            -Dsonar.host.url=$SONAR_URL \
+                            -Dsonar.token=$SONAR_AUTH_TOKEN
+                    '''
+                }
+            }
+        }
+
+        stage('Build et Push des images') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
+                    sh '''
+                        echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
+                        docker build -t "$DH_USER/hr-backend:$IMAGE_TAG" hr-admin-panel
+                        docker build -t "$DH_USER/hr-frontend:$IMAGE_TAG" hr-admin-panel/frontend
+                        docker push "$DH_USER/hr-backend:$IMAGE_TAG"
+                        docker push "$DH_USER/hr-frontend:$IMAGE_TAG"
+                    '''
+                }
+            }
+        }
+
+        stage('Mise a jour du chart Helm') {
+            steps {
+                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                    sh '''
+                        git config user.email "jenkins@local"
+                        git config user.name "Jenkins CI"
+                        sed -i "s/^backendTag: .*/backendTag: \\"$IMAGE_TAG\\"/" helm/hr/values.yaml
+                        sed -i "s/^frontendTag: .*/frontendTag: \\"$IMAGE_TAG\\"/" helm/hr/values.yaml
+                        git add helm/hr/values.yaml
+                        git commit -m "ci: deploy hr-admin-panel $IMAGE_TAG"
+                        git push "https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git" HEAD:main
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout || true'
+        }
+    }
+}
