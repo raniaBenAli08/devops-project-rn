@@ -194,7 +194,7 @@ The frontend will be available at `http://localhost:5173`.
 
 ```
 hr-admin-panel/
-|-- src/main/java/com/daoninhthai/hr/
+|-- src/main/java/com/rania/hr/
 |   |-- config/          # Security, metrics configuration
 |   |-- controller/      # REST controllers
 |   |-- dto/             # Data transfer objects

@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.daoninhthai</groupId>
+    <groupId>com.rania</groupId>
     <artifactId>hr-admin-panel</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>HR Admin Panel</name>

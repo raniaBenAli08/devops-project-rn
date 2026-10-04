@@ -22,7 +22,7 @@ else
 fi
 
 # 2) SecurityConfig : autoriser /actuator/health et /actuator/prometheus sans authentification
-SEC=src/main/java/com/daoninhthai/hr/config/SecurityConfig.java
+SEC=src/main/java/com/rania/hr/config/SecurityConfig.java
 if grep -q "actuator/prometheus" "$SEC"; then
   echo "SecurityConfig : déjà fait"
 else
