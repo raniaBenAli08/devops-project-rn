@@ -40,7 +40,7 @@ const LoginPage: React.FC = () => {
           <p>{t('Sign in to continue to your workspace.')}</p>
           <div className="login-dots" aria-hidden="true"><span /><span /><span /></div>
         </div>
-        <div className="login-panel-footer">HR Admin · {t('People operations')}</div>
+        <div className="login-panel-footer">HR FLOW · {t('People operations')}</div>
       </section>
       <section className="login-form-panel">
         <div className="locale-switch login-locale" role="group" aria-label={t('Language')}>
